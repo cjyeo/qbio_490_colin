@@ -1,0 +1,12 @@
+To push your local changes to GitHub, use the following sequence of commands:
+1. git status to view any unsaved changes.
+2. git add . to save all files or git add <dir/file> to save a specific file/folder.
+3. git commit to commit files for saving. Use '-m' to include a message.
+4. git push to push your changes to Github.
+
+The following steps need to be taken to edit any class assignments posted in the class Github:
+1. Navigate to your local version of the class repository.
+2. Use git pull to "pull" any new files to your local version.
+3. Use the scp command to copy new files to your personal repository.
+4. Edit the files in your personal repository.
+5. Add, commit, and push the files to your PERSONAL GitHub repository.
