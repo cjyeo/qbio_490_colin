@@ -134,6 +134,9 @@ Let's create a column in clinical called survival_time. For some patients, we ca
 # write code here 
 # HINT: use ifelse() and is.na()
 clinical$survival_time <- with(clinical, ifelse(clinical$days_to_death == "NA", clinical$days_to_last_follow_up, clinical$days_to_death))
+
+print(clinical$days_to_last_followup)
+print(clinical$survival_time)
 ```
 
 Next, create the death_event column. This column will store a boolean variable that is TRUE if there was a death event, or FALSE if there was no recorded event. You can use the vital_status column and an ifelse() statement to make this column.
@@ -148,8 +151,8 @@ Now we can perform our analysis! Read the Help info for each function, then fill
 ```{r}
 # Initialize a 'survival' object, which contains the data we need.
 ??Surv
-surv_object_age <- Surv(time = clinical$death_event,
-                    event = clinical$survival_time)
+surv_object_age <- Surv(time = clinical$survival_time,
+                    event = clinical$death_event)
 
 # Create a fit object
 # When writing formulas (x ~ y), x is what's being plotted and y is what is grouping x into categories

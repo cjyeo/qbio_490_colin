@@ -1,0 +1,146 @@
+---
+title: "Intro to MAF"
+author: Nicole Black
+date: 07/31/22
+---
+
+###### (1) Set Up
+
+```{r setup}
+    knitr::opts_knit$set(root.dir = normalizePath("/Users/colinyeo/desktop/School/qbio_490_colin/analysis_data/"))  
+```
+
+```{r}
+# install and load maftools and TCGAbiolinks
+library("BiocManager")
+library("TCGAbiolinks")
+BiocManager::install("maftools")
+library("maftools")
+```
+
+Before we get into MAF, we need to read in the clinical data (created in week 4) so it can be merged with our MAF data later on.
+
+```{r Exercise 1.1}
+clinical <- read.csv("/Users/colinyeo/Desktop/School/qbio_490_colin/week4_hw/brca_clinical_data.csv")
+```   
+
+We also need to change the bcr_patient_barcode column name that way the MAF package can read our clinical file.
+
+```{r Exercise 1.2}
+colnames(clinical)[ colnames(clinical) == "bcr_patient_barcode" ] <- "Tumor_Sample_Barcode"
+```
+
+After changing the column name, re-save the clinical data frame to your computer.
+
+```{r}
+# change the file path! make sure it's in your week4 folder
+write.csv(clinical, "/Users/colinyeo/Desktop/School/qbio_490_colin/week4_hw/brca_clinical_data.csv", row.names = FALSE)
+```
+
+###### (2) MAF Package
+
+Now, we can query in the MAF files using GDCquery()/GDCdownload()/GDCprepare() and read.maf(). 
+
+```{r Exercise 2.1}
+maf_query <- GDCquery(
+    project = "TCGA-BRCA", 
+    data.category = "Simple Nucleotide Variation", 
+    access = "open", # we only have access to somatic mutations which are open access
+    data.type = "Masked Somatic Mutation", 
+    workflow.type = "Aliquot Ensemble Somatic Variant Merging and Masking"
+)
+GDCdownload(maf_query)
+maf <- GDCprepare(maf_query) # as long as it runs, ignore any errors
+
+maf_object <- read.maf(maf = maf, 
+                       clinicalData = clinical,
+                       isTCGA = TRUE)
+```
+
+###### (3) Exploring the MAF Object
+
+Call str() on maf_object.
+
+```{r Exercise 3.1}
+str(maf_object)
+```
+
+Notice the @ and $ signs. What do each of them represent?
+
+  @ represents: one dataframe
+  $ represents: one column within the dataframe
+  
+List all of the data frames within the maf_object by typing maf_object@ then either waiting for a popup, or if no popup appears, by hitting tab.
+
+```{r Exercise 3.2}
+maf_object@data
+maf_object@variants.per.sample
+maf_object@variant.type.summary
+maf_object@variant.classification.summary
+maf_object@gene.summary
+maf_object@summary
+maf_object@maf.silent
+maf_object@clinical.data
+```
+
+Call head() and str() on the @data df and the @clinical.data df. These will be the main data frames we use in our MAF analysis.
+
+```{r Exercise 3.3}
+head(maf_object@data)
+head(maf_object@clinical)
+str(maf_object@data)
+str(maf_object@clinical)
+```
+
+View the first 110 items in Tumor_Sample_Barcode from @data and @clinical.data.
+
+```{r Exercise 3.4}
+head(maf_object@data$Tumor_Sample_Barcode, 110)
+head(maf_object@clinical.data$Tumor_Sample_Barcode, 110)
+```
+
+What do you notice about these two lists?
+
+View the Tumor_Sample_Barcode column and the HGVSp_Short column for all TP53 mutations (i.e. Hugo_Symbol == "TP53"). Hint: boolean masking!
+
+```{r Exercise 3.5}
+TP53_mask <- with(maf_object@data, ifelse(maf_object@data$Hugo_Symbol == "TP53", TRUE, FALSE))
+
+maf_object@data$Tumor_Sample_Barcode[TP53_mask]
+maf_object@data$HGVSp_Short[TP53_mask]
+```
+
+Call head() on the Amino_acids column in @data.
+
+```{r Exercise 3.6}
+# write code here
+```
+
+What mutation could cause a S/R change?
+
+What about an A/T change?
+
+Call head() on the HGVSp_Short column in @data.
+
+```{r Exercise 3.7}
+# write code here
+```
+
+What does p.P728Afs*11 mean? (Do some google-ing!)
+
+```{r Exercise 3.8}
+# use this code block for the following questions:
+```
+  
+  How many rows/columns are there in @data?
+  
+  What type of data is stored in the rows? What about the columns?
+  
+  How many levels are there in Tumor_Sample_Barcode (from @data)?
+  Are there duplicate values in Tumor_Sample_Barcode?
+  
+  How many unique values are there in Amino_acids?
+  Are there duplicate values in Amino_acids?
+  
+  How many unique values are there in HGVSp_Short?
+  Are there duplicate values in HGVSp_Short?
