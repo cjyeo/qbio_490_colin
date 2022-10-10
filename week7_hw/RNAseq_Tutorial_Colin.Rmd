@@ -230,17 +230,17 @@ Either a sample was high in TP53 counts and low in CD84 counts, or vice versa, i
 Let's visualize these two genes again, this time using box plots. To get both geneA_counts and geneB_counts on one plot, make a data frame using data.frame() that contains those lists as columns.
 
 ```{r}
-geneAB_counts <- data.frame(TP53_counts, CD84_counts) # create data frame with geneA_counts and geneB_counts
+geneAB_counts <- data.frame(as.numeric(TP53_counts), as.numeric(CD84_counts)) # create data frame with geneA_counts and geneB_counts
 
 # par(mar=c(1,1,1,1))
-boxplot(as.numeric(geneAB_counts),
+boxplot(geneAB_counts,
         xlab = "Samples",
         ylab = "# of total mutation reads", main = "# of mutation reads vs. Samples")
 ```
 
 Write a few sentence making observations about your plot, noting the significance of what this means, and any key takeaways:
 
-The average number of reads per sample for the combined TP53 + CD84 genes is about 2000-3000. This means that around 2000-3000 occurences of mutations within these genes led to a manifestation of cancer (so having less reads than this means the cancer is less likely to manifest). 
+The average number of reads per sample for the TP53 gene is higher than the D84 gene. This means that less occurrences of mutations within the CD84 gene led to a manifestation of cancer vs. the TP53 gene counts.
 
 
 ----
